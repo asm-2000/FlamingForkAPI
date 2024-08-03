@@ -1,0 +1,11 @@
+{
+  "name": "flamingfork_api",
+  "version": "1.0.0",
+  "description": "Backend API for food ordering app built for supposed restaurant \"Flamin' Fork\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ashim Baral",
+  "license": "ISC"
+}
