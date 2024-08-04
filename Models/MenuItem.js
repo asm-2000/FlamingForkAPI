@@ -10,6 +10,36 @@ const sequelize = new Sequelize(
   }
 );
 
-const MenuItem = sequelize.define();
+const MenuItem = sequelize.define("menuitem",
+  {
+    itemid: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    itemname: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    itemprice: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    itemdescription:{
+        type:DataTypes.STRING,
+        allowNull: true,   
+    },
+    itemcategory:{
+        type:DataTypes.STRING,
+        allowNull: false,   
+    },
+    itemimageurl:{
+        type:DataTypes.STRING,   
+    }
+  },
+  {
+    timestamps: false,
+    freezeTableName: true
+  });
 
 module.exports = MenuItem;
