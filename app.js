@@ -17,7 +17,7 @@ sequelize.sync();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({allowedHeaders: 'Authorization,Content-Type'}));
 app.use(morgan("dev"));
 
 app.use("/user",userRoute);

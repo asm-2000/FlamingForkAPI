@@ -9,9 +9,9 @@ const authenticateToken = (req, res, next) => {
 
   if (token == null) return res.sendStatus(401);
 
-  jwt.verify(token, SECRET_KEY, (err, user) => {
+  jwt.verify(token, SECRET_KEY, (err, userid) => {
     if (err) return res.sendStatus(403);
-    req.user = user;
+    req.userid = userid;
     next();
   });
 };
