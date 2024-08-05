@@ -12,7 +12,7 @@ const sequelize = new Sequelize(
 
 // Define customerorder schema structure
 
-const Order = sequelize.define(
+const CustomerOrder = sequelize.define(
   "customerorder",
   {
     orderid: {
@@ -24,25 +24,10 @@ const Order = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    customercontact: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     orderstatus: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    orderitems: {
-      type: DataTypes.JSONB,
-      allowNull: false,
-      get() {
-        const value = this.getDataValue("orderitem");
-        return value ? value : [];
-      },
-      set(value) {
-        this.setDataValue("orderitem", value);
-      },
-    },
+    }
   },
   {
     freezeTableName: true,

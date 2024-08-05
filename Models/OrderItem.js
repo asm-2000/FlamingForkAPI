@@ -11,25 +11,26 @@ const sequelize = new Sequelize(
 
 // Define customerorder schema structure
 
-const CartItem = sequelize.define(
-  "cartitem",
+const OrderItem = sequelize.define(
+  "orderitem",
   {
-    customerid: {
+    orderid: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
     },
-    cartitemname: {
+    orderitemname: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    cartitemprice: {
+    orderitemprice: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    quantity: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
+    quantity:{
+        type:DataTypes.INTEGER,
+        allowNull:false
+    }
   },
   {
     freezeTableName: true,
