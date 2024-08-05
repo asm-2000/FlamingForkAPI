@@ -14,10 +14,14 @@ const sequelize = new Sequelize(
 const OrderItem = sequelize.define(
   "orderitem",
   {
-    orderid: {
+    orderitemid: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
+    },
+    orderid: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
     orderitemname: {
       type: DataTypes.STRING,
@@ -27,10 +31,10 @@ const OrderItem = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    quantity:{
-        type:DataTypes.INTEGER,
-        allowNull:false
-    }
+    quantity: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
   {
     freezeTableName: true,
