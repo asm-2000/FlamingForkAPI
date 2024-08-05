@@ -15,6 +15,7 @@ const CartItem = sequelize.define(
   "cartitem",
   {
     cartitemid: {
+      type:DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
