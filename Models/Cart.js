@@ -37,4 +37,4 @@ const CartItem = sequelize.define(
   }
 );
 
-module.exports = Order;
+module.exports = CartItem;

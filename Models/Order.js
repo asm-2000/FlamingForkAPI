@@ -35,4 +35,4 @@ const CustomerOrder = sequelize.define(
   }
 );
 
-module.exports = Order;
+module.exports = CustomerOrder;
