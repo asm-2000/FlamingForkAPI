@@ -6,7 +6,7 @@ const auth = require("../Middleware/authentication");
 router.get("/userCart/:customerId", auth, async (req, res, next) => {
   const { customerId } = req.params;
   try {
-    const userCart = Cart.findOne({ where: { customerid: customerId } });
+    const userCart = await Cart.findOne({ where: { customerid: customerId } });
     if (userCart) {
       res.status(200).json(userCart);
     } else res.status(404).json({ message: "Cart is empty!" });
