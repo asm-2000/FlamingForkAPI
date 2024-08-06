@@ -103,7 +103,7 @@ router.get("/cancelledOrders", auth, async (req, res, next) => {
 
 // Handler to change the status of the order
 
-router.put("/changeOrderStatus", async (req, res, next) => {
+router.put("/changeOrderStatus", auth, async (req, res, next) => {
   const { customerOrder } = req.body;
   try {
     const updated = await CustomerOrder.update(customerOrder, {
@@ -112,6 +112,33 @@ router.put("/changeOrderStatus", async (req, res, next) => {
     if (updated[0] > 0) {
       res.status(200).json({ message: "Status updated sucessfully!" });
     } else res.status(404).json({ message: "Order not found!" });
+  } catch (error) {
+    next(error);
+  }
+});
+
+//Handler to place a customer order
+
+router.post("/placeCustomerOrder", auth, async (req, res, next) => {
+  const { customerid, customercontact, customeraddress, orderstatus } =
+    req.body.customerOrder;
+  const orderItems = req.body.orderItems;
+  try {
+    const order = await CustomerOrder.create({
+      customerid,
+      customercontact,
+      customeraddress,
+      orderstatus,
+    });
+    OrderItem.map(async (orderItem) => {
+      await OrderItem.create({
+        orderid: order.orderid,
+        orderitemname: orderItem.orderitemname,
+        orderitemprice: orderItem.orderitemprice,
+        quantity: orderItem.quantity,
+      });
+    });
+    res.status(201).json({ message: "Order placed sucessfully!" });
   } catch (error) {
     next(error);
   }
