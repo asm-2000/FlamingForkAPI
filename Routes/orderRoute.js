@@ -28,10 +28,7 @@ router.get("/activeOrders", auth, async (req, res, next) => {
         })
       );
       if (orders.length > 0) {
-        res.status(200).json({
-          message: "Fetched all active orders",
-          orders,
-        });
+        res.status(200).json({ orders });
       } else {
         res.status(200).json({ message: "No active orders!" });
       }
@@ -64,10 +61,7 @@ router.get("/completedOrders", auth, async (req, res, next) => {
         })
       );
       if (orders.length > 0) {
-        res.status(200).json({
-          message: "Fetched all completed orders",
-          orders,
-        });
+        res.status(200).json({ orders });
       } else {
         res.status(200).json({ message: "No completed orders!" });
       }
@@ -100,10 +94,7 @@ router.get("/cancelledOrders", auth, async (req, res, next) => {
         })
       );
       if (orders.length > 0) {
-        res.status(200).json({
-          message: "Fetched all cancelled orders",
-          orders,
-        });
+        res.status(200).json({ orders });
       } else {
         res.status(200).json({ message: "No cancelled orders!" });
       }
@@ -170,8 +161,8 @@ router.post("/placeCustomerOrder", auth, async (req, res, next) => {
 
 // Handler to return all the orders of a customer.
 
-router.get("/customerOrders/:customerId",auth,async (req,res,next)=>{
-  const {customerId} = req.params; 
+router.get("/customerOrders/:customerId", auth, async (req, res, next) => {
+  const { customerId } = req.params;
   try {
     const allCustomerOrders = await CustomerOrder.findAll({
       where: { customerid: customerId },
@@ -187,16 +178,13 @@ router.get("/customerOrders/:customerId",auth,async (req,res,next)=>{
             orderid: customerOrder.orderid,
             customercontact: customerOrder.customercontact,
             customeraddress: customerOrder.Customeraddress,
-            orderstatus:customerOrder.orderstatus,
+            orderstatus: customerOrder.orderstatus,
             items: alItemsInCustomerOrder,
           };
         })
       );
       if (orders.length > 0) {
-        res.status(200).json({
-          message: "Fetched all customer orders",
-          orders,
-        });
+        res.status(200).json({ orders });
       } else {
         res.status(200).json({ message: "No orders!" });
       }
