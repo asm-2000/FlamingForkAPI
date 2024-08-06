@@ -10,10 +10,10 @@ const SECRET_KEY = "as1WK-dmW45-adbe5-eh98F-KLa78";
 
 router.post("/registerCustomer", async (req, res) => {
   try {
-    const { customername, email, password, address, contact } = req.body;
+    const { customerName, email, password, address, contact } = req.body;
 
     const customer = await Customer.create({
-      customername,
+      customername:customerName,
       email,
       password,
       address,
@@ -22,7 +22,7 @@ router.post("/registerCustomer", async (req, res) => {
 
     res.status(201).send({ message: "User registered successfully" });
   } catch (error) {
-    res.status(400).send({ message: "User registration failed", error });
+    res.status(400).send({ message: "User registration failed"});
   }
 });
 

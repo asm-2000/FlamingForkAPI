@@ -22,28 +22,28 @@ router.get("/userCart/:customerId", auth, async (req, res, next) => {
 // Handler to save the cart item of a customer.
 
 router.post("/saveCartItem", auth, async (req, res, next) => {
-  const { customerid, cartitemname, cartitemprice, quantity } = req.body;
+  const { customerId, cartItemName, cartItemPrice, quantity } = req.body;
   try {
     const existItem = await CartItem.findOne({
-      where: { customerid: customerid, cartitemname: cartitemname },
+      where: { customerid: customerId, cartitemname: cartItemName },
     });
     if (existItem) {
       const cartItem = {
         cartitemid: existItem.cartitemid,
-        customerid: customerid,
-        cartitemname: cartitemname,
-        cartitemprice: cartitemprice,
+        customerid: customerId,
+        cartitemname: cartItemName,
+        cartitemprice: cartItemPrice,
         quantity: quantity + existItem.quantity,
       };
       await CartItem.update(cartItem, {
-        where: { customerid: customerid, cartitemname: cartitemname },
+        where: { customerid: customerId, cartitemname: cartItemName },
       });
     } else {
       await CartItem.create({
-        customerid,
-        cartitemname,
-        cartitemprice,
-        quantity,
+        customerid:customerId,
+        cartitemname:cartItemName,
+        cartitemprice:cartItemPrice,
+        quantity:quantity,
       });
     }
     res.status(201).json({ message: "Item added to cart successfully!" });
@@ -70,10 +70,10 @@ router.delete("/clearCartItems/:customerId", auth, async (req, res, next) => {
 
 router.delete("/deleteCartItem/:customerId", auth, async (req, res, next) => {
   const { customerId } = req.params;
-  const { cartitemid } = req.body;
+  const { cartItemId } = req.body;
   try {
     await CartItem.destroy({
-      where: { customerid: customerId, cartitemid: cartitemid },
+      where: { customerid: customerId, cartitemid: cartItemId },
     });
     res.status(202).json({ message: "Deleted item sucessfully!" });
   } catch (error) {

@@ -12,9 +12,8 @@ router.get("/activeOrders", auth, async (req, res, next) => {
     const allPlacedOrders = await CustomerOrder.findAll({
       where: { orderstatus: "placed" },
     });
-    const allPlacedOrderInfo = [];
     if (allPlacedOrders) {
-      const allPlacedOrderInfo = await Promise.all(
+      const orders = await Promise.all(
         allPlacedOrders.map(async (placedOrder) => {
           const alItemsInPlacedOrder = await OrderItem.findAll({
             where: { orderid: placedOrder.orderid },
@@ -23,14 +22,12 @@ router.get("/activeOrders", auth, async (req, res, next) => {
           return {
             orderid: placedOrder.orderid,
             customercontact: placedOrder.customercontact,
-            customeraddress: placedOrder.Customeraddress,
+            customeraddress: placedOrder.customeraddress,
             items: alItemsInPlacedOrder,
           };
         })
       );
-      res
-        .status(200)
-        .json({ message: "Fetched all active orders", allPlacedOrderInfo });
+      res.status(200).json({ message: "Fetched all active orders", orders });
     }
   } catch (error) {
     next(error);
@@ -45,7 +42,7 @@ router.get("/completedOrders", auth, async (req, res, next) => {
       where: { orderstatus: "completed" },
     });
     if (allCompletedOrders) {
-      const allCompletedOrderInfo = await Promise.all(
+      const orders = await Promise.all(
         allCompletedOrders.map(async (completedOrder) => {
           const alItemsInCompletedOrder = await OrderItem.findAll({
             where: { orderid: completedOrder.orderid },
@@ -61,7 +58,7 @@ router.get("/completedOrders", auth, async (req, res, next) => {
       );
       res.status(200).json({
         message: "Fetched all completed orders",
-        allCompletedOrderInfo,
+        orders,
       });
     }
   } catch (error) {
@@ -77,7 +74,7 @@ router.get("/cancelledOrders", auth, async (req, res, next) => {
       where: { orderstatus: "cancelled" },
     });
     if (allCancelledOrders) {
-      const allCancelledOrderInfo = await Promise.all(
+      const orders = await Promise.all(
         allCancelledOrders.map(async (cancelledOrder) => {
           const alItemsInCancelledOrder = await OrderItem.findAll({
             where: { orderid: cancelledOrder.orderid },
@@ -93,7 +90,7 @@ router.get("/cancelledOrders", auth, async (req, res, next) => {
       );
       res.status(200).json({
         message: "Fetched all completed orders",
-        allCancelledOrderInfo,
+        orders,
       });
     }
   } catch (error) {
@@ -104,7 +101,15 @@ router.get("/cancelledOrders", auth, async (req, res, next) => {
 // Handler to change the status of the order
 
 router.put("/changeOrderStatus", auth, async (req, res, next) => {
-  const { customerOrder } = req.body;
+  const { orderId, customerId, customerContact, customerAddress, orderStatus } =
+    req.body;
+  const customerOrder = {
+    orderid:orderId,
+    customerid:customerId,
+    customercontact:customerContact,
+    customeraddress:customerAddress,
+    orderstatus:orderStatus,
+  };
   try {
     const updated = await CustomerOrder.update(customerOrder, {
       where: { customerid: customerOrder.customerid },
@@ -120,17 +125,16 @@ router.put("/changeOrderStatus", auth, async (req, res, next) => {
 //Handler to place a customer order
 
 router.post("/placeCustomerOrder", auth, async (req, res, next) => {
-  const { customerid, customercontact, customeraddress, orderstatus } =
-    req.body.customerOrder;
-  const orderItems = req.body.orderItems;
+  const { customerId, customerContact, customerAddress, orderStatus, orderItems } =
+    req.body;
   try {
     const order = await CustomerOrder.create({
-      customerid,
-      customercontact,
-      customeraddress,
-      orderstatus,
+      customerid:customerId,
+      customercontact:customerContact,
+      customeraddress:customerAddress,
+      orderstatus:orderStatus,
     });
-    OrderItem.map(async (orderItem) => {
+    orderItems.map(async (orderItem) => {
       await OrderItem.create({
         orderid: order.orderid,
         orderitemname: orderItem.orderitemname,
