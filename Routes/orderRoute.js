@@ -27,7 +27,14 @@ router.get("/activeOrders", auth, async (req, res, next) => {
           };
         })
       );
-      res.status(200).json({ message: "Fetched all active orders", orders });
+      if (orders.length > 0) {
+        res.status(200).json({
+          message: "Fetched all active orders",
+          orders,
+        });
+      } else {
+        res.status(200).json({ message: "No active orders!" });
+      }
     }
   } catch (error) {
     next(error);
@@ -56,10 +63,14 @@ router.get("/completedOrders", auth, async (req, res, next) => {
           };
         })
       );
-      res.status(200).json({
-        message: "Fetched all completed orders",
-        orders,
-      });
+      if (orders.length > 0) {
+        res.status(200).json({
+          message: "Fetched all completed orders",
+          orders,
+        });
+      } else {
+        res.status(200).json({ message: "No completed orders!" });
+      }
     }
   } catch (error) {
     next(error);
@@ -88,10 +99,14 @@ router.get("/cancelledOrders", auth, async (req, res, next) => {
           };
         })
       );
-      res.status(200).json({
-        message: "Fetched all completed orders",
-        orders,
-      });
+      if (orders.length > 0) {
+        res.status(200).json({
+          message: "Fetched all cancelled orders",
+          orders,
+        });
+      } else {
+        res.status(200).json({ message: "No cancelled orders!" });
+      }
     }
   } catch (error) {
     next(error);
@@ -104,11 +119,11 @@ router.put("/changeOrderStatus", auth, async (req, res, next) => {
   const { orderId, customerId, customerContact, customerAddress, orderStatus } =
     req.body;
   const customerOrder = {
-    orderid:orderId,
-    customerid:customerId,
-    customercontact:customerContact,
-    customeraddress:customerAddress,
-    orderstatus:orderStatus,
+    orderid: orderId,
+    customerid: customerId,
+    customercontact: customerContact,
+    customeraddress: customerAddress,
+    orderstatus: orderStatus,
   };
   try {
     const updated = await CustomerOrder.update(customerOrder, {
@@ -125,14 +140,19 @@ router.put("/changeOrderStatus", auth, async (req, res, next) => {
 //Handler to place a customer order
 
 router.post("/placeCustomerOrder", auth, async (req, res, next) => {
-  const { customerId, customerContact, customerAddress, orderStatus, orderItems } =
-    req.body;
+  const {
+    customerId,
+    customerContact,
+    customerAddress,
+    orderStatus,
+    orderItems,
+  } = req.body;
   try {
     const order = await CustomerOrder.create({
-      customerid:customerId,
-      customercontact:customerContact,
-      customeraddress:customerAddress,
-      orderstatus:orderStatus,
+      customerid: customerId,
+      customercontact: customerContact,
+      customeraddress: customerAddress,
+      orderstatus: orderStatus,
     });
     orderItems.map(async (orderItem) => {
       await OrderItem.create({
