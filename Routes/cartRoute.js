@@ -40,10 +40,10 @@ router.post("/saveCartItem", auth, async (req, res, next) => {
       });
     } else {
       await CartItem.create({
-        customerid:customerId,
-        cartitemname:cartItemName,
-        cartitemprice:cartItemPrice,
-        quantity:quantity,
+        customerid: customerId,
+        cartitemname: cartItemName,
+        cartitemprice: cartItemPrice,
+        quantity: quantity,
       });
     }
     res.status(201).json({ message: "Item added to cart successfully!" });

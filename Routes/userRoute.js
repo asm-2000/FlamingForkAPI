@@ -13,7 +13,7 @@ router.post("/registerCustomer", async (req, res) => {
     const { customerName, email, password, address, contact } = req.body;
 
     const customer = await Customer.create({
-      customername:customerName,
+      customername: customerName,
       email,
       password,
       address,
@@ -22,7 +22,7 @@ router.post("/registerCustomer", async (req, res) => {
 
     res.status(201).send({ message: "User registered successfully" });
   } catch (error) {
-    res.status(400).send({ message: "User registration failed"});
+    res.status(400).send({ message: "User registration failed" });
   }
 });
 
@@ -31,7 +31,7 @@ router.post("/registerCustomer", async (req, res) => {
 router.post("/loginCustomer", async (req, res) => {
   try {
     const { email, password } = req.body;
-    const customer = await Customer.findOne({ where: { email:email } });
+    const customer = await Customer.findOne({ where: { email: email } });
 
     if (!customer || !(await bcrypt.compare(password, customer.password))) {
       return res.status(401).send({ message: "Invalid username or password" });
@@ -39,7 +39,7 @@ router.post("/loginCustomer", async (req, res) => {
     const token = jwt.sign({ customerid: customer.customerid }, SECRET_KEY, {
       expiresIn: "10d",
     });
-    res.send({ message: "Login successful", token, customer });
+    res.send({ token, customer });
   } catch (error) {
     res.status(500).send({ message: "Login failed" });
   }
@@ -58,7 +58,7 @@ router.post("/registerAdmin", async (req, res) => {
 
     res.status(201).send({ message: "Admin registered successfully" });
   } catch (error) {
-    res.status(400).send({ message: "Admin registration failed", error });
+    res.status(400).send({ message: "Admin registration failed" });
   }
 });
 
@@ -67,7 +67,7 @@ router.post("/registerAdmin", async (req, res) => {
 router.post("/loginAdmin", async (req, res) => {
   try {
     const { email, password } = req.body;
-    const admin = await AdminUser.findOne({ where: { email:email } });
+    const admin = await AdminUser.findOne({ where: { email: email } });
 
     if (!admin || !(await bcrypt.compare(password, admin.password))) {
       return res.status(401).send({ message: "Invalid username or password" });
@@ -76,9 +76,9 @@ router.post("/loginAdmin", async (req, res) => {
       expiresIn: "10d",
     });
 
-    res.send({ message: "Login successful", token });
+    res.send({ token });
   } catch (error) {
-    res.status(500).send({ message: "Login failed", error });
+    res.status(500).send({ message: "Login failed!" });
   }
 });
 
