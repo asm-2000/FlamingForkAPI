@@ -5,7 +5,7 @@ const auth = require("../Middleware/authentication");
 const { where } = require("sequelize");
 const router = express.Router();
 
-// Handler to get all active orders (Admin side)
+// Handler to get all active orders (Admin side).
 
 router.get("/activeOrders", auth, async (req, res, next) => {
   try {
@@ -41,7 +41,7 @@ router.get("/activeOrders", auth, async (req, res, next) => {
   }
 });
 
-// Handler to get all completed orders (Admin side)
+// Handler to get all completed orders (Admin side).
 
 router.get("/completedOrders", auth, async (req, res, next) => {
   try {
@@ -77,7 +77,7 @@ router.get("/completedOrders", auth, async (req, res, next) => {
   }
 });
 
-// Handler to get all cancelled orders (Admin side)
+// Handler to get all cancelled orders (Admin side).
 
 router.get("/cancelledOrders", auth, async (req, res, next) => {
   try {
@@ -113,7 +113,7 @@ router.get("/cancelledOrders", auth, async (req, res, next) => {
   }
 });
 
-// Handler to change the status of the order
+// Handler to change the status of the order.
 
 router.put("/changeOrderStatus", auth, async (req, res, next) => {
   const { orderId, customerId, customerContact, customerAddress, orderStatus } =
@@ -137,7 +137,7 @@ router.put("/changeOrderStatus", auth, async (req, res, next) => {
   }
 });
 
-//Handler to place a customer order
+//Handler to place a customer order.
 
 router.post("/placeCustomerOrder", auth, async (req, res, next) => {
   const {
@@ -168,7 +168,45 @@ router.post("/placeCustomerOrder", auth, async (req, res, next) => {
   }
 });
 
-// Internal error handler
+// Handler to return all the orders of a customer.
+
+router.get("/customerOrders/:customerId",auth,async (req,res,next)=>{
+  const {customerId} = req.params; 
+  try {
+    const allCustomerOrders = await CustomerOrder.findAll({
+      where: { customerid: customerId },
+    });
+    if (allCustomerOrders) {
+      const orders = await Promise.all(
+        allCustomerOrders.map(async (customerOrder) => {
+          const alItemsInCustomerOrder = await OrderItem.findAll({
+            where: { orderid: customerOrder.orderid },
+          });
+
+          return {
+            orderid: customerOrder.orderid,
+            customercontact: customerOrder.customercontact,
+            customeraddress: customerOrder.Customeraddress,
+            orderstatus:customerOrder.orderstatus,
+            items: alItemsInCustomerOrder,
+          };
+        })
+      );
+      if (orders.length > 0) {
+        res.status(200).json({
+          message: "Fetched all customer orders",
+          orders,
+        });
+      } else {
+        res.status(200).json({ message: "No orders!" });
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Internal error handler.
 
 router.use((error, req, res, next) => {
   res.status(500).json({ message: error.message });
