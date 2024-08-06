@@ -24,6 +24,14 @@ const CustomerOrder = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    customercontact: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    customeraddress: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     orderstatus: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -35,4 +43,4 @@ const CustomerOrder = sequelize.define(
   }
 );
 
-module.exports = Order;
+module.exports = CustomerOrder;

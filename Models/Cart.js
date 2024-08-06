@@ -14,6 +14,11 @@ const sequelize = new Sequelize(
 const CartItem = sequelize.define(
   "cartitem",
   {
+    cartitemid: {
+      type:DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
     customerid: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -37,4 +42,4 @@ const CartItem = sequelize.define(
   }
 );
 
-module.exports = Order;
+module.exports = CartItem;
