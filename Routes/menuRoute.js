@@ -6,28 +6,28 @@ const auth = require("../Middleware/authentication");
 router.get("/allMenuItems", auth, async (req, res, next) => {
   const allItems = await MenuItem.findAll();
   if (allItems) {
-    res.status(200).json({ allItems: allItems });
+    res.status(200).json({ allitems: allItems });
   } else {
     res.status(400).json({ message: "No items found" });
   }
 });
 
 router.post("/addMenuItem",auth, async (req, res) => {
-  const { itemname, itemprice, itemdescription, itemcategory, itemimageurl } =
+  const { itemName, itemPrice, itemDescription, itemCategory, itemImageurl } =
     req.body;
 
   if (req.body) {
     try {
-      const existItem = MenuItem.findOne({ where: { itemname: itemname } });
+      const existItem = MenuItem.findOne({ where: { itemname: itemName } });
       if (existItem > 0) {
         res.status(400).json({ message: "Item of same name already exists!" });
       } else {
         await MenuItem.create({
-          itemname,
-          itemprice,
-          itemdescription,
-          itemcategory,
-          itemimageurl,
+          itemname:itemName,
+          itemprice:itemPrice,
+          itemdescription:itemDescription,
+          itemcategory:itemCategory,
+          itemimageurl:itemImageurl,
         });
         res.status(201).json({ message: "Successfully added Menu Item!" });
       }
@@ -39,12 +39,11 @@ router.post("/addMenuItem",auth, async (req, res) => {
   }
 });
 
-router.put("/updateMenuItem/:id", auth, async (req, res) => {
-  const { id } = req.params;
+router.put("/updateMenuItem", auth, async (req, res) => {
   const newItem = req.body;
 
   try {
-    const result = await MenuItem.update(newItem, { where: { itemid: id } });
+    const result = await MenuItem.update(newItem, { where: { itemid: newItem.itemId } });
     if (result[0] > 0) {
       res.status(200).json({ message: "Item replaced successfully" });
     } else {
@@ -55,12 +54,12 @@ router.put("/updateMenuItem/:id", auth, async (req, res) => {
   }
 });
 
-router.delete("/deleteMenuItem/:id",auth, async (req, res, next) => {
-  const { id } = req.params;
+router.delete("/deleteMenuItem/:itemId",auth, async (req, res, next) => {
+  const { itemId } = req.params;
 
   try {
     const result = await MenuItem.destroy({
-      where: { itemid: id },
+      where: { itemid: itemId },
     });
     if (result > 0) {
       res.status(200).json({ message: "Item deleted successfully" });
