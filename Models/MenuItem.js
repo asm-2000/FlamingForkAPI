@@ -38,6 +38,8 @@ const MenuItem = sequelize.define("menuitem",
     }
   },
   {
+    hooks:false,
+    defaultScope:{},
     timestamps: false,
     freezeTableName: true
   });
