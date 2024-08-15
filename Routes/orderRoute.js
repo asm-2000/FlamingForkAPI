@@ -148,8 +148,8 @@ router.post("/placeCustomerOrder", auth, async (req, res, next) => {
     orderItems.map(async (orderItem) => {
       await OrderItem.create({
         orderid: order.orderid,
-        orderitemname: orderItem.orderitemname,
-        orderitemprice: orderItem.orderitemprice,
+        orderitemname: orderItem.orderItemName,
+        orderitemprice: orderItem.orderItemPrice,
         quantity: orderItem.quantity,
       });
     });

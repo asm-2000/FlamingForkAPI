@@ -31,15 +31,15 @@ router.post("/registerCustomer", async (req, res) => {
 router.post("/loginCustomer", async (req, res) => {
   try {
     const { email, password } = req.body;
-    const customer = await Customer.findOne({ where: { email: email } });
-
+    const customer = await Customer.findOne({ where: { email: email }, raw:true });
+    console.log(customer);
     if (!customer || !(await bcrypt.compare(password, customer.password))) {
       return res.status(401).send({ message: "Invalid username or password" });
     }
     const token = jwt.sign({ customerid: customer.customerid }, SECRET_KEY, {
       expiresIn: "10d",
     });
-    res.send({ token, customer });
+    res.send({ token, customerDetails:customer });
   } catch (error) {
     res.status(500).send({ message: "Login failed" });
   }
