@@ -27,6 +27,11 @@ const CartItem = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    cartitemimageurl:
+    {
+      type:DataTypes.STRING,
+      allowNull:false
+    },
     cartitemprice: {
       type: DataTypes.INTEGER,
       allowNull: false,

@@ -9,10 +9,10 @@ router.get("/userCart/:customerId", auth, async (req, res, next) => {
   const { customerId } = req.params;
   try {
     const userCartItems = await CartItem.findAll({
-      where: { customerid: customerId },
+      where: { customerid: customerId },raw:true
     });
     if (userCart) {
-      res.status(200).json(userCartItems);
+      res.status(200).json({allCartItems:userCartItems});
     } else res.status(404).json({ message: "Cart is empty!" });
   } catch (error) {
     next(error);
@@ -22,7 +22,7 @@ router.get("/userCart/:customerId", auth, async (req, res, next) => {
 // Handler to save the cart item of a customer.
 
 router.post("/saveCartItem", auth, async (req, res, next) => {
-  const { customerId, cartItemName, cartItemPrice, quantity } = req.body;
+  const { customerId, cartItemName, cartItemPrice,cartItemImageUrl, quantity } = req.body;
   try {
     const existItem = await CartItem.findOne({
       where: { customerid: customerId, cartitemname: cartItemName },
@@ -34,6 +34,7 @@ router.post("/saveCartItem", auth, async (req, res, next) => {
         cartitemname: cartItemName,
         cartitemprice: cartItemPrice,
         quantity: quantity + existItem.quantity,
+        cartitemiamgeurl: cartItemImageUrl
       };
       await CartItem.update(cartItem, {
         where: { customerid: customerId, cartitemname: cartItemName },
