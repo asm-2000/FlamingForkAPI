@@ -7,12 +7,10 @@ const auth = require("../Middleware/authentication");
 
 router.get("/userCart/:customerId", auth, async (req, res, next) => {
   const { customerId } = req.params;
-  console.log(customerId);
   try {
     const userCartItems = await CartItem.findAll({
       where: { customerid: customerId },raw:true
     });
-    console.log(userCartItems);
     if (userCartItems) {
       res.status(200).json({allCartItems:userCartItems});
     } else res.status(404).json({ message: "Cart is empty!" });
@@ -25,7 +23,6 @@ router.get("/userCart/:customerId", auth, async (req, res, next) => {
 
 router.post("/saveCartItem", auth, async (req, res, next) => {
   const { customerId, cartItemName, cartItemPrice,cartItemImageUrl, quantity } = req.body;
-  console.log(cartItemImageUrl);
   try {
     const existItem = await CartItem.findOne({
       where: { customerid: customerId, cartitemname: cartItemName },
@@ -75,6 +72,7 @@ router.delete("/clearCartItems/:customerId", auth, async (req, res, next) => {
 
 router.delete("/deleteCartItem/:details", auth, async (req, res, next) => {
   const { details } = req.params;
+  console.log(details);
   const customerId = details.split(" ")[0];
   const cartItemId = details.split(" ")[1];
   try {

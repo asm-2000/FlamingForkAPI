@@ -6,7 +6,6 @@ const auth = require("../Middleware/authentication");
 router.get("/allMenuItems", auth, async (req, res, next) => {
   const allItems = await MenuItem.findAll({raw:true});
   JSON.stringify(allItems);
-  console.log(allItems);
   if (allItems) {
     res.status(200).json({ allMenuItems: allItems });
   } else {
