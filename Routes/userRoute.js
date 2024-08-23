@@ -37,7 +37,7 @@ router.post("/loginCustomer", async (req, res) => {
       return res.status(401).send({ message: "Invalid username or password" });
     }
     const token = jwt.sign({ customerid: customer.customerid }, SECRET_KEY, {
-      expiresIn: "10d",
+      expiresIn: "365d",
     });
     res.send({ token, customerDetails:customer });
   } catch (error) {
@@ -73,10 +73,10 @@ router.post("/loginAdmin", async (req, res) => {
       return res.status(401).send({ message: "Invalid username or password" });
     }
     const token = jwt.sign({ adminid: admin.adminid }, SECRET_KEY, {
-      expiresIn: "10d",
+      expiresIn: "365d",
     });
 
-    res.send({ token });
+    res.send({ authenticationToken:token });
   } catch (error) {
     res.status(500).send({ message: "Login failed!" });
   }

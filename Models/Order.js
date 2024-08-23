@@ -35,6 +35,10 @@ const CustomerOrder = sequelize.define(
     orderstatus: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    orderdate:{
+      type: DataTypes.STRING,
+      allowNull: false,
     }
   },
   {
