@@ -9,10 +9,10 @@ router.get("/userCart/:customerId", auth, async (req, res, next) => {
   const { customerId } = req.params;
   try {
     const userCartItems = await CartItem.findAll({
-      where: { customerid: customerId },
+      where: { customerid: customerId },raw:true
     });
-    if (userCart) {
-      res.status(200).json(userCartItems);
+    if (userCartItems) {
+      res.status(200).json({allCartItems:userCartItems});
     } else res.status(404).json({ message: "Cart is empty!" });
   } catch (error) {
     next(error);
@@ -22,7 +22,7 @@ router.get("/userCart/:customerId", auth, async (req, res, next) => {
 // Handler to save the cart item of a customer.
 
 router.post("/saveCartItem", auth, async (req, res, next) => {
-  const { customerId, cartItemName, cartItemPrice, quantity } = req.body;
+  const { customerId, cartItemName, cartItemPrice,cartItemImageUrl, quantity } = req.body;
   try {
     const existItem = await CartItem.findOne({
       where: { customerid: customerId, cartitemname: cartItemName },
@@ -34,6 +34,7 @@ router.post("/saveCartItem", auth, async (req, res, next) => {
         cartitemname: cartItemName,
         cartitemprice: cartItemPrice,
         quantity: quantity + existItem.quantity,
+        cartitemimageurl: cartItemImageUrl
       };
       await CartItem.update(cartItem, {
         where: { customerid: customerId, cartitemname: cartItemName },
@@ -44,6 +45,7 @@ router.post("/saveCartItem", auth, async (req, res, next) => {
         cartitemname: cartItemName,
         cartitemprice: cartItemPrice,
         quantity: quantity,
+        cartitemimageurl:cartItemImageUrl
       });
     }
     res.status(201).json({ message: "Item added to cart successfully!" });
@@ -60,7 +62,7 @@ router.delete("/clearCartItems/:customerId", auth, async (req, res, next) => {
     await CartItem.destroy({
       where: { customerid: customerId },
     });
-    res.status(201).json({ message: "Cleared user's cart successfully!" });
+    res.status(201).json({ message: "Cleared cart successfully!" });
   } catch (error) {
     next(error);
   }
@@ -68,9 +70,11 @@ router.delete("/clearCartItems/:customerId", auth, async (req, res, next) => {
 
 // Handler to delete an item from customers cart.
 
-router.delete("/deleteCartItem/:customerId", auth, async (req, res, next) => {
-  const { customerId } = req.params;
-  const { cartItemId } = req.body;
+router.delete("/deleteCartItem/:details", auth, async (req, res, next) => {
+  const { details } = req.params;
+  console.log(details);
+  const customerId = details.split(" ")[0];
+  const cartItemId = details.split(" ")[1];
   try {
     await CartItem.destroy({
       where: { customerid: customerId, cartitemid: cartItemId },

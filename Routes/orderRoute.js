@@ -10,7 +10,7 @@ const router = express.Router();
 router.get("/activeOrders", auth, async (req, res, next) => {
   try {
     const allPlacedOrders = await CustomerOrder.findAll({
-      where: { orderstatus: "placed" },
+      where: { orderstatus: "placed" },raw:true
     });
     if (allPlacedOrders) {
       const orders = await Promise.all(
@@ -24,6 +24,7 @@ router.get("/activeOrders", auth, async (req, res, next) => {
             customercontact: placedOrder.customercontact,
             customeraddress: placedOrder.customeraddress,
             items: alItemsInPlacedOrder,
+            orderdate: placedOrder.orderdate
           };
         })
       );
@@ -43,7 +44,7 @@ router.get("/activeOrders", auth, async (req, res, next) => {
 router.get("/completedOrders", auth, async (req, res, next) => {
   try {
     const allCompletedOrders = await CustomerOrder.findAll({
-      where: { orderstatus: "completed" },
+      where: { orderstatus: "completed" },raw:true
     });
     if (allCompletedOrders) {
       const orders = await Promise.all(
@@ -57,6 +58,7 @@ router.get("/completedOrders", auth, async (req, res, next) => {
             customercontact: completedOrder.customercontact,
             customeraddress: completedOrder.Customeraddress,
             items: alItemsInCompletedOrder,
+            orderdate: completedOrder.orderdate
           };
         })
       );
@@ -76,7 +78,7 @@ router.get("/completedOrders", auth, async (req, res, next) => {
 router.get("/cancelledOrders", auth, async (req, res, next) => {
   try {
     const allCancelledOrders = await CustomerOrder.findAll({
-      where: { orderstatus: "cancelled" },
+      where: { orderstatus: "cancelled" },raw:true
     });
     if (allCancelledOrders) {
       const orders = await Promise.all(
@@ -90,6 +92,7 @@ router.get("/cancelledOrders", auth, async (req, res, next) => {
             customercontact: cancelledOrder.customercontact,
             customeraddress: cancelledOrder.Customeraddress,
             items: alItemsInCancelledOrder,
+            orderdate: cancelledOrder.orderdate
           };
         })
       );
@@ -107,25 +110,27 @@ router.get("/cancelledOrders", auth, async (req, res, next) => {
 // Handler to change the status of the order.
 
 router.put("/changeOrderStatus", auth, async (req, res, next) => {
-  const { orderId, customerId, customerContact, customerAddress, orderStatus } =
+  const { orderId, customerId, customerContact, customerAddress, orderStatus, orderDate } =
     req.body;
+    console.log(req.body);
   const customerOrder = {
     orderid: orderId,
     customerid: customerId,
     customercontact: customerContact,
     customeraddress: customerAddress,
     orderstatus: orderStatus,
+    orderdate: orderDate
   };
-  try {
-    const updated = await CustomerOrder.update(customerOrder, {
-      where: { customerid: customerOrder.customerid },
-    });
-    if (updated[0] > 0) {
-      res.status(200).json({ message: "Status updated sucessfully!" });
-    } else res.status(404).json({ message: "Order not found!" });
-  } catch (error) {
-    next(error);
-  }
+    try {
+      const updated = await CustomerOrder.update(customerOrder, {
+        where: { customerid: customerOrder.customerid, orderid: customerOrder.orderid },
+      });
+      if (updated[0] > 0) {
+        res.status(200).json({ message: "Status updated sucessfully!" });
+      } else res.status(404).json({ message: "Order not found!" });
+    } catch (error) {
+      next(error);
+    }
 });
 
 //Handler to place a customer order.
@@ -137,6 +142,7 @@ router.post("/placeCustomerOrder", auth, async (req, res, next) => {
     customerAddress,
     orderStatus,
     orderItems,
+    orderDate
   } = req.body;
   try {
     const order = await CustomerOrder.create({
@@ -144,6 +150,7 @@ router.post("/placeCustomerOrder", auth, async (req, res, next) => {
       customercontact: customerContact,
       customeraddress: customerAddress,
       orderstatus: orderStatus,
+      orderdate: orderDate
     });
     orderItems.map(async (orderItem) => {
       await OrderItem.create({
@@ -165,26 +172,28 @@ router.get("/customerOrders/:customerId", auth, async (req, res, next) => {
   const { customerId } = req.params;
   try {
     const allCustomerOrders = await CustomerOrder.findAll({
-      where: { customerid: customerId },
+      where: { customerid: customerId }, raw:true,
     });
+    console.log(allCustomerOrders);
     if (allCustomerOrders) {
       const orders = await Promise.all(
         allCustomerOrders.map(async (customerOrder) => {
-          const alItemsInCustomerOrder = await OrderItem.findAll({
-            where: { orderid: customerOrder.orderid },
+          const allItemsInCustomerOrder = await OrderItem.findAll({
+            where: { orderid: customerOrder.orderid },raw:true
           });
-
           return {
             orderid: customerOrder.orderid,
+            customerid: customerOrder.customerid,
             customercontact: customerOrder.customercontact,
-            customeraddress: customerOrder.Customeraddress,
+            customeraddress: customerOrder.customeraddress,
             orderstatus: customerOrder.orderstatus,
-            items: alItemsInCustomerOrder,
+            orderitems: allItemsInCustomerOrder,
+            orderdate: customerOrder.orderdate
           };
         })
       );
       if (orders.length > 0) {
-        res.status(200).json({ orders });
+        res.status(200).json({ customerOrders:orders });
       } else {
         res.status(200).json({ message: "No orders!" });
       }
@@ -197,6 +206,7 @@ router.get("/customerOrders/:customerId", auth, async (req, res, next) => {
 // Internal error handler.
 
 router.use((error, req, res, next) => {
+  console.log(error.message)
   res.status(500).json({ message: error.message });
 });
 
