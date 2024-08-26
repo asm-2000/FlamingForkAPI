@@ -30,6 +30,7 @@ router.get("/allOrders", auth, async (req, res, next) => {
 
           return {
             orderid: order.orderid,
+            customerid:order.customerid,
             customercontact: order.customercontact,
             customeraddress: order.customeraddress,
             orderstatus: order.orderstatus,
@@ -67,6 +68,7 @@ router.get("/placedOrders", auth, async (req, res, next) => {
           return {
             orderid: placedOrder.orderid,
             customercontact: placedOrder.customercontact,
+            customerid:placedOrder.customerid,
             customeraddress: placedOrder.customeraddress,
             orderitems: alItemsInPlacedOrder,
             orderstatus: placedOrder.orderstatus,
@@ -103,6 +105,7 @@ router.get("/beingPreparedOrders", auth, async (req, res, next) => {
           return {
             orderid: beingPreparedOrder.orderid,
             customercontact: beingPreparedOrder.customercontact,
+            customerid:placedOrder.customerid,
             customeraddress: beingPreparedOrder.customeraddress,
             orderitems: alItemsInBeingPreparedOrder,
             orderstatus: beingPreparedOrder.orderstatus,
@@ -139,6 +142,7 @@ router.get("/beingDeliveredOrders", auth, async (req, res, next) => {
           return {
             orderid: beingDeliveredOrder.orderid,
             customercontact: beingDeliveredOrder.customercontact,
+            customerid:beingDeliveredOrder.customerid,
             customeraddress: beingDeliveredOrder.customeraddress,
             orderitems: alItemsInBeingDeliveredOrder,
             orderstatus: beingDeliveredOrder.orderstatus,
@@ -175,6 +179,7 @@ router.get("/deliveredOrders", auth, async (req, res, next) => {
           return {
             orderid: deliveredOrder.orderid,
             customercontact: deliveredOrder.customercontact,
+            customerid:deliveredOrder.customerid,
             customeraddress: deliveredOrder.customeraddress,
             orderitems: alItemsInDeliveredOrder,
             orderstatus: deliveredOrder.orderstatus,
@@ -211,6 +216,7 @@ router.get("/cancelledOrders", auth, async (req, res, next) => {
           return {
             orderid: cancelledOrder.orderid,
             customercontact: cancelledOrder.customercontact,
+            customerid:cancelledOrder.customerid,
             customeraddress: cancelledOrder.customeraddress,
             orderitems: alItemsInCancelledOrder,
             orderstatus: cancelledOrder.orderstatus,
