@@ -91,23 +91,25 @@ router.post("/loginAdmin", async (req, res) => {
 // Handler to update the customer's details.
 
 router.put("/updateCustomerDetails", async (req,res,next) => {
-  const {customerId, customerName, email, password, address, contact } = req.body;
+  const {customerID, customerName, address, contact } = req.body;
+  console.log(address);
   try{
-    const existCustomer = await Customer.findOne({where:{customerid:customerId}});
+    const existCustomer = await Customer.findOne({where:{customerid:customerID}});
     if(existCustomer)
     {
       const newCustomerDetails = {
-        customerid:customerId,
+        customerid:customerID,
         customername: customerName,
         email:existCustomer.email,
         password:existCustomer.password,
         address,
         contact,
       };
-      const updated = await Customer.update(newCustomerDetails,{where:{customerid : customerId}});
+      const updated = await Customer.update(newCustomerDetails,{where:{customerid : customerID}});
       if (updated[0] > 0) {
-        res.status(200).json({ message: "Details updated sucessfully!" });
-      } else res.status(404).json({ message: "Customer Details not found!" });
+        const customer = Customer.findOne({where:{customerid:customerID}})
+        res.status(200).json({ message: "Details updated sucessfully!",customerDetails:customer });
+      } else res.status(404).json({ message: "Customer not found!" });
     }
   }
   catch(error)
@@ -115,5 +117,10 @@ router.put("/updateCustomerDetails", async (req,res,next) => {
     next(error);
   }
 });
+
+router.use((error,req,res) =>{
+  console.log(error.message);
+  res.status(500).json({ message: error.message });
+})
 
 module.exports = router;
