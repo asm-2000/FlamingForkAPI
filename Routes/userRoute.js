@@ -107,7 +107,8 @@ router.put("/updateCustomerDetails", async (req,res,next) => {
       };
       const updated = await Customer.update(newCustomerDetails,{where:{customerid : customerID}});
       if (updated[0] > 0) {
-        const customer = Customer.findOne({where:{customerid:customerID}})
+        const customer = await Customer.findOne({where:{customerid:customerID},raw:true})
+        console.log(customer);
         res.status(200).json({ message: "Details updated sucessfully!",customerDetails:customer });
       } else res.status(404).json({ message: "Customer not found!" });
     }
