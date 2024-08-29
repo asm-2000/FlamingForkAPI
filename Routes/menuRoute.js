@@ -3,8 +3,8 @@ const router = express.Router();
 const MenuItem = require("../Models/MenuItem");
 const auth = require("../Middleware/authentication");
 
-router.get("/allMenuItems", async (req, res, next) => {
-  const allItems = await MenuItem.findAll({raw:true});
+router.get("/allMenuItems",auth, async (req, res, next) => {
+  const allItems = await MenuItem.findAll({ raw: true });
   JSON.stringify(allItems);
   if (allItems) {
     res.status(200).json({ allMenuItems: allItems });
@@ -13,27 +13,20 @@ router.get("/allMenuItems", async (req, res, next) => {
   }
 });
 
-router.post("/addMenuItem",auth, async (req, res) => {
-  const { itemName, itemPrice, itemDescription, itemCategory, itemImageurl } =
-    req.body;
-
+router.post("/addMenuItem", auth, async (req, res, next) => {
+  const { itemName, itemPrice, itemCategory, itemImageUrl } = req.body;
   if (req.body) {
     try {
-      const existItem = MenuItem.findOne({ where: { itemname: itemName } });
-      if (existItem > 0) {
-        res.status(400).json({ message: "Item of same name already exists!" });
-      } else {
-        await MenuItem.create({
-          itemname:itemName,
-          itemprice:itemPrice,
-          itemdescription:itemDescription,
-          itemcategory:itemCategory,
-          itemimageurl:itemImageurl,
-        });
-        res.status(201).json({ message: "Successfully added Menu Item!" });
-      }
-    } catch {
-      res.status(500).json({ message: "Server Error: Cannot add item!" });
+      await MenuItem.create({
+        itemname: itemName,
+        itemprice: itemPrice,
+        itemdescription: "Empty",
+        itemcategory: itemCategory,
+        itemimageurl: itemImageUrl,
+      });
+      res.status(201).json({ message: "Successfully added Menu Item!" });
+    } catch(error) {
+      next(error);
     }
   } else {
     res.status(400).json({ message: "Null values provided!" });
@@ -41,12 +34,29 @@ router.post("/addMenuItem",auth, async (req, res) => {
 });
 
 router.put("/updateMenuItem", auth, async (req, res) => {
-  const newItem = req.body;
-
+  const {
+    itemId,
+    itemName,
+    itemPrice,
+    itemDescription,
+    itemCategory,
+    itemImageUrl,
+  } = req.body;
+  console.log(itemImageUrl);
+  const newItem = {
+    itemid: itemId,
+    itemname: itemName,
+    itemprice: itemPrice,
+    itemdescription: itemDescription,
+    itemcategory: itemCategory,
+    itemimageurl: itemImageUrl,
+  };
   try {
-    const result = await MenuItem.update(newItem, { where: { itemid: newItem.itemId } });
+    const result = await MenuItem.update(newItem, {
+      where: { itemid: newItem.itemid },
+    });
     if (result[0] > 0) {
-      res.status(200).json({ message: "Item replaced successfully" });
+      res.status(200).json({ message: "Updated Item Details successfully" });
     } else {
       res.status(404).json({ message: "Item not found" });
     }
@@ -55,7 +65,7 @@ router.put("/updateMenuItem", auth, async (req, res) => {
   }
 });
 
-router.delete("/deleteMenuItem/:itemId",auth, async (req, res, next) => {
+router.delete("/deleteMenuItem/:itemId", auth, async (req, res, next) => {
   const { itemId } = req.params;
 
   try {
@@ -73,8 +83,8 @@ router.delete("/deleteMenuItem/:itemId",auth, async (req, res, next) => {
 });
 
 router.use((error, req, res, next) => {
+  console.log(error.message);
   res.status(500).json({ message: error.message });
 });
 
 module.exports = router;
-

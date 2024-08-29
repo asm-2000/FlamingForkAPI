@@ -105,7 +105,7 @@ router.get("/beingPreparedOrders", auth, async (req, res, next) => {
           return {
             orderid: beingPreparedOrder.orderid,
             customercontact: beingPreparedOrder.customercontact,
-            customerid:placedOrder.customerid,
+            customerid:beingPreparedOrder.customerid,
             customeraddress: beingPreparedOrder.customeraddress,
             orderitems: alItemsInBeingPreparedOrder,
             orderstatus: beingPreparedOrder.orderstatus,
