@@ -11,16 +11,22 @@ const SECRET_KEY = "as1WK-dmW45-adbe5-eh98F-KLa78";
 router.post("/registerCustomer", async (req, res) => {
   try {
     const { customerName, email, password, address, contact } = req.body;
-
-    const customer = await Customer.create({
-      customername: customerName,
-      email,
-      password,
-      address,
-      contact,
-    });
-
-    res.status(201).send({ message: "User registered successfully" });
+    const existCustomer = await Customer.findOne({where:{email:email}});
+    if(existCustomer)
+    {
+      console.log("user exits");
+      res.status(400).send({message: "User already exists!"});
+    }
+    else{
+      const customer = await Customer.create({
+        customername: customerName,
+        email,
+        password,
+        address,
+        contact,
+      });
+      res.status(201).send({ message: "User registered successfully" });
+    }
   } catch (error) {
     res.status(400).send({ message: "User registration failed" });
   }
@@ -79,6 +85,34 @@ router.post("/loginAdmin", async (req, res) => {
     res.send({ authenticationToken:token });
   } catch (error) {
     res.status(500).send({ message: "Login failed!" });
+  }
+});
+
+// Handler to update the customer's details.
+
+router.put("/updateCustomerDetails", async (req,res,next) => {
+  const {customerId, customerName, email, password, address, contact } = req.body;
+  try{
+    const existCustomer = await Customer.findOne({where:{customerid:customerId}});
+    if(existCustomer)
+    {
+      const newCustomerDetails = {
+        customerid:customerId,
+        customername: customerName,
+        email:existCustomer.email,
+        password:existCustomer.password,
+        address,
+        contact,
+      };
+      const updated = await Customer.update(newCustomerDetails,{where:{customerid : customerId}});
+      if (updated[0] > 0) {
+        res.status(200).json({ message: "Details updated sucessfully!" });
+      } else res.status(404).json({ message: "Customer Details not found!" });
+    }
+  }
+  catch(error)
+  {
+    next(error);
   }
 });
 
